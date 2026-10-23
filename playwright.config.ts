@@ -1,11 +1,13 @@
 import { defineConfig } from '@playwright/test'
 import path from 'node:path'
 
-const evidenceDirectory = process.env.EVENTFLOW_EVIDENCE_DIR ?? path.resolve('../_artifacts/evidence/S02')
-const checkoutTests = ['booking.spec.ts', 'validation.s02.spec.ts', 'responsive.s02.spec.ts']
+const evidenceDirectory = process.env.EVENTFLOW_EVIDENCE_DIR ?? path.resolve('../_artifacts/evidence/S03')
+process.env.EVENTFLOW_EVIDENCE_DIR = evidenceDirectory
+const checkoutTests = ['booking.spec.ts', 'validation.s02.spec.ts', 'responsive.s02.spec.ts', 'release.s03.spec.ts']
 
 export default defineConfig({
   testDir: './e2e',
+  globalSetup: './e2e/globalSetup.ts',
   fullyParallel: false,
   workers: 1,
   retries: 0,

@@ -4,6 +4,11 @@ export const TICKET_PRICES: Record<TicketKind, number> = { adult: 2000, child: 1
 export const TICKET_LABELS: Record<TicketKind, string> = { adult: 'Полный билет', child: 'Детский билет' }
 export const MAX_PARTICIPANTS = 4
 
+export function formatTicketCount(count: number): string {
+  const form = new Intl.PluralRules('ru-RU').select(count)
+  return `${count} ${form === 'one' ? 'билет' : form === 'few' ? 'билета' : 'билетов'}`
+}
+
 export function parseAge(value: string): number | null {
   if (!/^[0-9]+$/.test(value)) return null
   const age = Number(value)
