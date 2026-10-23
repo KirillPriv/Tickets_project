@@ -1,0 +1,30 @@
+node_modules/
+dist/
+coverage/
+.vite/
+.cache/
+*.log
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
+playwright-report/
+test-results/
+_artifacts/
+*.zip
+*.tmp
+.DS_Store
+
+# Внутренняя документация Codex
+/AGENTS.md
+/PROJECT_BRIEF.md
+/docs/
+/design-reference/
+/reference/
+/scripts/
+
+# Внутренние артефакты
+/_artifacts/
+

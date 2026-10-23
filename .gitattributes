@@ -1,0 +1,3 @@
+# Keep source-only git archive compact: these are inputs/reference images, not runtime source.
+reference/** export-ignore
+design-reference/** export-ignore
