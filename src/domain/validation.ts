@@ -2,6 +2,31 @@ import { calculateTotal, getTicketKind, MAX_PARTICIPANTS, parseAge } from './pri
 import type { BookingDraft, FieldErrors, OrderErrors, Participant, ValidatedOrder, ValidatedParticipant } from './types'
 
 export const COMPANION_ERROR = 'Участнику младше 18 лет нужен сопровождающий от 18 лет в этом же заказе.'
+export const NAME_MIN_LENGTH = 2
+export const NAME_MAX_LENGTH = 80
+export const NAME_HINT = 'От 2 до 80 символов: русские или латинские буквы, пробелы, дефисы и апострофы.'
+export const AGE_HINT = 'Только цифры, от 0 до 120 лет.'
+
+// A separator joins letter groups; punctuation alone and repeated separators are invalid.
+// The letter-category check excludes non-letter Latin-script symbols (e.g. Roman numerals).
+const NAME_PATTERN = /^(?:(?=\p{L})[\p{Script=Latin}А-Яа-яЁё])+(?:[- '’](?:(?=\p{L})[\p{Script=Latin}А-Яа-яЁё])+)*$/u
+
+export function normalizeName(value: string): string {
+  return value.normalize('NFC').trim().replace(/\s+/gu, ' ')
+}
+
+export function validateName(value: string): string | undefined {
+  const name = normalizeName(value)
+  if (!name) return 'Введите имя участника.'
+  if (!NAME_PATTERN.test(name)) {
+    return 'Используйте русские или латинские буквы. Между частями имени допустимы пробел, дефис или апостроф.'
+  }
+  const length = Array.from(name).length
+  if (length < NAME_MIN_LENGTH || length > NAME_MAX_LENGTH) {
+    return 'Имя должно содержать от 2 до 80 символов.'
+  }
+  return undefined
+}
 
 export function hasAdultCompanion(ages: readonly number[]): boolean {
   return !ages.some(age => age < 18) || ages.some(age => age >= 18)
@@ -9,7 +34,8 @@ export function hasAdultCompanion(ages: readonly number[]): boolean {
 
 export function validateParticipant(participant: Participant): FieldErrors {
   const errors: FieldErrors = {}
-  if (!participant.name.trim()) errors.name = 'Введите имя участника.'
+  const nameError = validateName(participant.name)
+  if (nameError) errors.name = nameError
   const age = parseAge(participant.age)
   if (age === null) errors.age = 'Укажите целый возраст от 0 до 120 лет.'
   else if (getTicketKind(age) !== participant.selectedTicket) {
@@ -38,7 +64,7 @@ export function validateOrder(draft: BookingDraft): ValidationResult {
     const fieldErrors = validateParticipant(participant)
     if (Object.keys(fieldErrors).length > 0) errors.participants[participant.id] = fieldErrors
     const age = parseAge(participant.age)
-    if (age !== null) parsed.push({ ...participant, name: participant.name.trim(), age })
+    if (age !== null) parsed.push({ ...participant, name: normalizeName(participant.name), age })
   }
   if (parsed.length === draft.participants.length && !hasAdultCompanion(parsed.map(p => p.age))) {
     errors.order = COMPANION_ERROR

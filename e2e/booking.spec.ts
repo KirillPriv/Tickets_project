@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-const evidenceDirectory = process.env.EVENTFLOW_EVIDENCE_DIR ?? path.resolve('../_artifacts/evidence/S01')
+const evidenceDirectory = process.env.EVENTFLOW_EVIDENCE_DIR ?? path.resolve('../_artifacts/evidence/S02')
 const browserErrors = new WeakMap<Page, string[]>()
 
 async function noOverflow(page: Page) {

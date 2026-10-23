@@ -5,7 +5,7 @@ export const TICKET_LABELS: Record<TicketKind, string> = { adult: 'Полный 
 export const MAX_PARTICIPANTS = 4
 
 export function parseAge(value: string): number | null {
-  if (value.trim() === '') return null
+  if (!/^[0-9]+$/.test(value)) return null
   const age = Number(value)
   return Number.isInteger(age) && age >= 0 && age <= 120 ? age : null
 }
